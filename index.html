@@ -1,311 +1,3422 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<meta name="theme-color" content="#070707" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="theme-color" content="#050505">
+
 <title>Entenhausen | Advanced Sidebar Dashboard</title>
+
 <style>
-  :root{
-    --gold:#ffd54a;
-    --gold2:#ffb300;
-    --gold3:#7a4a00;
-    --cream:#fff4c4;
-    --ink:#050505;
-    --panel:rgba(8,8,8,.82);
-    --panel2:rgba(18,10,5,.88);
-    --line:rgba(255,213,74,.36);
-    --text:#fffdf3;
-    --muted:#bcb7aa;
-    --red:#d83322;
-    --shadow:0 22px 60px rgba(0,0,0,.55);
+:root{
+  --black:#050505;
+  --red:#dd0000;
+  --red2:#ff2b2b;
+  --gold:#ffce00;
+  --gold2:#ffb300;
+  --cream:#fff3b5;
+  --text:#fffdf3;
+  --muted:#c9c4b7;
+  --line:rgba(255,206,0,.38);
+  --shadow:0 22px 60px rgba(0,0,0,.65);
+}
+
+*{
+  box-sizing:border-box;
+}
+
+html{
+  scroll-behavior:smooth;
+  background:#0a0a0a;
+}
+
+body{
+  margin:0;
+  min-height:100vh;
+  font-family:Georgia,"Times New Roman",serif;
+  color:var(--text);
+  background:#0a0a0a;
+  overflow-x:hidden;
+}
+
+/* =========================
+   ANIMATIONS
+========================= */
+
+@keyframes pulse{
+  0%,100%{box-shadow:0 0 0 rgba(255,206,0,0)}
+  50%{box-shadow:0 0 28px rgba(255,206,0,.28)}
+}
+
+@keyframes float{
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(-5px)}
+}
+
+@keyframes sweep{
+  0%{left:-35%}
+  100%{left:120%}
+}
+
+@keyframes glow{
+  0%,100%{
+    filter:drop-shadow(0 0 4px rgba(255,206,0,.35));
   }
-  *{box-sizing:border-box}
-  html{scroll-behavior:smooth;background:#050505}
-  body{
-    margin:0;
-    min-height:100vh;
-    font-family:Georgia,"Times New Roman",serif;
-    color:var(--text);
-    background:
-      radial-gradient(circle at 50% 10%,rgba(255,191,0,.12),transparent 34%),
-      linear-gradient(rgba(0,0,0,.62),rgba(0,0,0,.76)),
-      url("assets/background.jpeg") center/cover fixed no-repeat;
-    overflow-x:hidden;
+  50%{
+    filter:drop-shadow(0 0 14px rgba(255,206,0,.9));
   }
-  body::before{
-    content:"";
-    position:fixed; inset:0; pointer-events:none; z-index:0;
-    background:repeating-linear-gradient(180deg,rgba(255,255,255,.018) 0 1px,transparent 1px 4px);
-    mix-blend-mode:screen; opacity:.4;
+}
+
+@keyframes barGlow{
+  0%,100%{filter:brightness(1)}
+  50%{filter:brightness(1.35)}
+}
+
+@keyframes shimmer{
+  0%{transform:translateX(-140%) rotate(12deg)}
+  100%{transform:translateX(420%) rotate(12deg)}
+}
+
+@keyframes embers{
+  from{
+    background-position:0 100vh,35px 110vh;
   }
-  .embers,.embers::before,.embers::after{
-    position:fixed; inset:0; content:""; pointer-events:none; z-index:0;
-    background-image:
-      radial-gradient(circle, rgba(255,172,38,.9) 0 1px, transparent 2px),
-      radial-gradient(circle, rgba(255,79,28,.75) 0 1px, transparent 2px);
-    background-size:75px 110px,125px 160px;
-    background-position:0 0,35px 55px;
-    animation:embers 18s linear infinite;
-    opacity:.28;
+  to{
+    background-position:50px -20vh,10px -30vh;
   }
-  .embers::before{animation-duration:28s; transform:scale(.75); opacity:.22}
-  .embers::after{animation-duration:36s; transform:scale(1.15); opacity:.16}
-  @keyframes embers{from{background-position:0 100vh,35px 110vh}to{background-position:50px -20vh,10px -30vh}}
-  @keyframes pulse{0%,100%{box-shadow:0 0 0 rgba(255,213,74,0)}50%{box-shadow:0 0 28px rgba(255,213,74,.28)}}
-  @keyframes shimmer{0%{transform:translateX(-140%) rotate(12deg)}100%{transform:translateX(420%) rotate(12deg)}}
-  @keyframes glow{0%,100%{filter:drop-shadow(0 0 4px rgba(255,213,74,.35))}50%{filter:drop-shadow(0 0 14px rgba(255,213,74,.9))}}
-  @keyframes barGlow{0%,100%{filter:brightness(1)}50%{filter:brightness(1.35)}}
-  @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
-  @keyframes sweep{0%{left:-35%}100%{left:120%}}
+}
+
+/* =========================
+   AMBIENT PARTICLES
+========================= */
+
+.embers,
+.embers::before,
+.embers::after{
+  position:fixed;
+  inset:0;
+  content:"";
+  pointer-events:none;
+  z-index:0;
+
+  background-image:
+    radial-gradient(circle,rgba(255,206,0,.8) 0 1px,transparent 2px),
+    radial-gradient(circle,rgba(221,0,0,.7) 0 1px,transparent 2px);
+
+  background-size:
+    75px 110px,
+    125px 160px;
+
+  background-position:
+    0 0,
+    35px 55px;
+
+  animation:embers 18s linear infinite;
+  opacity:.18;
+}
+
+.embers::before{
+  animation-duration:28s;
+  transform:scale(.75);
+  opacity:.16;
+}
+
+.embers::after{
+  animation-duration:36s;
+  transform:scale(1.15);
+  opacity:.12;
+}
+
+/* =========================
+   SIDEBAR
+========================= */
+
+.shell{
+  position:relative;
+  z-index:1;
+  width:min(100%,390px);
+  margin:0 auto;
+  padding:10px;
+}
+
+.dashboard{
+  position:relative;
+  overflow:hidden;
+
+  border:2px solid var(--gold);
+  border-radius:24px;
+
+  background:#050505;
+
+  box-shadow:
+    var(--shadow),
+    inset 0 0 55px rgba(221,0,0,.10);
+
+  transition:transform .18s ease;
+}
+
+/*
+  GERMAN EAGLE BACKGROUND
+  IS NOW INSIDE THE SIDEBAR
+*/
+
+.dashboard::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:0;
+  pointer-events:none;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(0,0,0,.34),
+      rgba(0,0,0,.64)
+    ),
+    url("assets/background.jpeg")
+    center top /
+    100% auto
+    repeat-y;
+
+  opacity:.82;
+}
+
+.dashboard::after{
+  content:"";
+
+  position:absolute;
+  top:-30%;
+  bottom:-30%;
+  width:34px;
+  left:-25%;
+
+  z-index:2;
+
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      rgba(255,255,255,.12),
+      transparent
+    );
+
+  transform:rotate(12deg);
+
+  animation:sweep 10s linear infinite;
+
+  pointer-events:none;
+}
+
+.dashboard > *{
+  position:relative;
+  z-index:1;
+}
+
+/* =========================
+   GERMAN FLAG STRIPE
+========================= */
+
+.topline{
+  height:7px;
+
+  background:
+    linear-gradient(
+      90deg,
+      #000 0 33.333%,
+      #dd0000 33.333% 66.666%,
+      #ffce00 66.666% 100%
+    );
+
+  box-shadow:
+    0 2px 14px rgba(255,206,0,.30);
+
+  animation:barGlow 2.5s ease-in-out infinite;
+}
+
+/* =========================
+   HERO
+========================= */
+
+.hero{
+  position:relative;
+
+  padding:
+    18px 14px 14px;
+
+  text-align:center;
+
+  border-bottom:
+    1px solid var(--line);
+
+  overflow:hidden;
+}
+
+.hero::before{
+  content:"";
+
+  position:absolute;
+  inset:-45% -20%;
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(255,206,0,.15),
+      transparent 50%
+    );
+
+  animation:pulse 4s ease-in-out infinite;
+}
+
+.club-logo{
+  position:relative;
+
+  width:96px;
+  height:96px;
+
+  border-radius:24px;
+
+  object-fit:cover;
+
+  border:
+    2px solid var(--gold);
+
+  box-shadow:
+    0 0 0 5px rgba(255,206,0,.06),
+    0 12px 30px rgba(0,0,0,.6);
+
+  animation:
+    float 5s ease-in-out infinite;
+}
+
+.eyebrow{
+  position:relative;
+
+  margin-top:11px;
+
+  color:var(--gold);
+
+  font:
+    700 10px/1.2
+    Arial,sans-serif;
+
+  letter-spacing:3px;
+
+  text-transform:uppercase;
+}
+
+.hero h1{
+  position:relative;
+
+  margin:6px 0 3px;
+
+  font-size:27px;
+
+  text-shadow:
+    0 2px 0 #000,
+    0 0 18px rgba(255,206,0,.22);
+}
+
+.tagline{
+  position:relative;
+
+  color:#ddd5c5;
+
+  font:
+    italic 11px/1.5
+    Georgia,serif;
+}
+
+.live-row{
+  position:relative;
+
+  display:flex;
+
+  justify-content:center;
+
+  gap:8px;
+
+  flex-wrap:wrap;
+
+  margin-top:12px;
+}
+
+.chip{
+  font:
+    700 9px/1
+    Arial,sans-serif;
+
+  letter-spacing:1px;
+
+  text-transform:uppercase;
+
+  padding:7px 9px;
+
+  border-radius:999px;
+
+  border:
+    1px solid rgba(255,206,0,.35);
+
+  background:
+    rgba(0,0,0,.58);
+
+  color:#ffe589;
+}
+
+.dot{
+  display:inline-block;
+
+  width:7px;
+  height:7px;
+
+  margin-right:5px;
+
+  border-radius:50%;
+
+  background:#6dff7a;
+
+  box-shadow:
+    0 0 10px #6dff7a;
+
+  vertical-align:-1px;
+
+  animation:
+    pulse 1.4s infinite;
+}
+
+/* =========================
+   CLOCK
+========================= */
+
+.time-panel{
+  position:relative;
+
+  margin:
+    15px auto 0;
+
+  padding:
+    12px 10px;
+
+  max-width:290px;
+
+  border:
+    1px solid var(--gold);
+
+  border-radius:15px;
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(0,0,0,.86),
+      rgba(70,0,0,.70)
+    );
+
+  overflow:hidden;
+
+  box-shadow:
+    inset 0 0 20px rgba(0,0,0,.4),
+    0 0 18px rgba(221,0,0,.12);
+}
+
+.time-panel::before{
+  content:"";
+
+  position:absolute;
+
+  top:0;
+  left:0;
+  right:0;
+
+  height:3px;
+
+  background:
+    linear-gradient(
+      90deg,
+      #000 0 33%,
+      #dd0000 33% 66%,
+      #ffce00 66% 100%
+    );
+}
+
+.greeting{
+  color:#ffe589;
+
+  font:
+    700 11px/1.3
+    Arial,sans-serif;
+
+  letter-spacing:1px;
+
+  text-transform:uppercase;
+}
+
+.browser-clock{
+  margin-top:5px;
+
+  color:#fff;
+
+  font:
+    800 25px/1
+    Arial,sans-serif;
+
+  letter-spacing:2px;
+
+  text-shadow:
+    0 0 15px rgba(255,206,0,.35);
+}
+
+.browser-date{
+  margin-top:5px;
+
+  color:#c9c4b7;
+
+  font:
+    9px/1.3
+    Arial,sans-serif;
+}
+
+/* =========================
+   LANGUAGE TABS
+========================= */
+
+.langtabs{
+  display:grid;
+
+  grid-template-columns:
+    1fr 1fr;
+
+  gap:8px;
+
+  padding:10px;
+
+  background:
+    rgba(0,0,0,.75);
+
+  border-bottom:
+    1px solid var(--line);
+}
+
+.langtabs button{
+  appearance:none;
+
+  border:
+    1px solid var(--line);
+
+  background:#111;
+
+  color:#bdb7a9;
+
+  padding:10px 8px;
+
+  border-radius:12px;
+
+  font:
+    700 10px/1
+    Arial,sans-serif;
+
+  letter-spacing:1.2px;
+
+  cursor:pointer;
+
+  transition:.2s ease;
+}
+
+.langtabs button:hover{
+  transform:
+    translateY(-1px);
+
+  border-color:
+    var(--gold);
+}
+
+.langtabs button.active{
+  background:
+    linear-gradient(
+      135deg,
+      #dd0000 0 48%,
+      #ffce00 100%
+    );
+
+  color:#080808;
+
+  border-color:#ffdf4d;
+
+  box-shadow:
+    0 0 20px rgba(221,0,0,.28),
+    0 0 16px rgba(255,206,0,.18);
+}
+
+/* LANGUAGE DISPLAY */
+
+.lang-en [data-lang="de"]{
+  display:none!important;
+}
+
+.lang-de [data-lang="en"]{
+  display:none!important;
+}
+
+/* =========================
+   CONTENT
+========================= */
+
+.content{
+  padding:10px;
+}
+
+.card{
+  position:relative;
+
+  margin-bottom:10px;
+
+  border:
+    1px solid var(--line);
+
+  border-left:
+    3px solid var(--red);
+
+  border-radius:16px;
+
+  padding:13px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(0,0,0,.84),
+      rgba(38,0,0,.76)
+    );
+
+  overflow:hidden;
+
+  box-shadow:
+    inset 0 0 18px rgba(0,0,0,.38);
+
+  backdrop-filter:
+    blur(4px);
+
+  transition:
+    transform .22s ease,
+    border-color .22s ease,
+    box-shadow .22s ease;
+}
+
+.card:hover{
+  transform:
+    translateY(-2px);
+
+  border-color:
+    rgba(255,206,0,.78);
+
+  box-shadow:
+    0 10px 24px rgba(0,0,0,.25),
+    inset 0 0 24px rgba(255,206,0,.04);
+}
+
+.card::before{
+  content:"";
+
+  position:absolute;
+
+  top:0;
+  left:0;
+  right:0;
+
+  height:2px;
+
+  background:
+    linear-gradient(
+      90deg,
+      #000 0 33%,
+      #dd0000 33% 66%,
+      #ffce00 66% 100%
+    );
+}
+
+.title{
+  display:flex;
+
+  align-items:center;
+
+  justify-content:
+    space-between;
+
+  gap:8px;
+
+  margin-bottom:10px;
+
+  color:var(--gold);
+
+  font:
+    700 10px/1.2
+    Arial,sans-serif;
+
+  letter-spacing:2px;
+
+  text-transform:uppercase;
+}
+
+.title small{
+  font-size:8px;
+
+  color:#aaa;
+
+  letter-spacing:1px;
+}
+
+/* =========================
+   MEMBER PROGRESS
+========================= */
+
+.progress-meta{
+  display:flex;
+
+  align-items:end;
+
+  justify-content:
+    space-between;
+
+  gap:10px;
+}
+
+.big{
+  font:
+    700 25px/1
+    Arial,sans-serif;
+}
+
+.muted{
+  color:#aaa;
+
+  font:
+    10px/1.4
+    Arial,sans-serif;
+}
+
+.track{
+  position:relative;
+
+  height:10px;
+
+  margin-top:10px;
+
+  border-radius:999px;
+
+  background:#171717;
+
+  border:
+    1px solid #4b4334;
+
+  overflow:hidden;
+}
+
+.fill{
+  height:100%;
+
+  width:50%;
+
+  background:
+    linear-gradient(
+      90deg,
+      #000,
+      #dd0000,
+      #ffce00
+    );
+
+  box-shadow:
+    0 0 14px rgba(255,206,0,.6);
+
+  animation:
+    barGlow 2s ease-in-out infinite;
+}
+
+.ruler{
+  margin-top:7px;
+
+  text-align:right;
+
+  color:#ffe174;
+
+  font:
+    700 10px
+    Arial,sans-serif;
+}
+
+/* =========================
+   OWNER
+========================= */
+
+.owner{
+  display:grid;
+
+  grid-template-columns:
+    64px 1fr;
+
+  gap:11px;
+
+  align-items:center;
+}
+
+.owner img{
+  width:64px;
+  height:64px;
+
+  border-radius:16px;
+
+  border:
+    1px solid var(--gold);
+
+  object-fit:cover;
+}
+
+.owner strong{
+  font-size:13px;
+}
+
+.quote{
+  margin-top:4px;
+
+  color:#aaa;
+
+  font:
+    italic 10px/1.5
+    Georgia,serif;
+}
+
+/* =========================
+   LINKS
+========================= */
+
+.links{
+  display:grid;
+
+  grid-template-columns:
+    1fr 1fr;
+
+  gap:7px;
+}
+
+.links a{
+  position:relative;
+
+  overflow:hidden;
+
+  text-decoration:none;
+
+  text-align:center;
+
+  padding:9px 7px;
+
+  border-radius:10px;
+
+  border:
+    1px solid rgba(255,206,0,.3);
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(0,0,0,.9),
+      rgba(90,0,0,.55)
+    );
+
+  color:#ffe58b;
+
+  font:
+    700 9px/1.2
+    Arial,sans-serif;
+
+  letter-spacing:.6px;
+
+  transition:.2s ease;
+}
+
+.links a:hover{
+  background:
+    linear-gradient(
+      135deg,
+      #dd0000,
+      #ffce00
+    );
+
+  color:#080808;
+
+  transform:
+    translateY(-1px);
+}
+
+.links a::after{
+  content:"";
+
+  position:absolute;
+
+  top:-40%;
+  left:-40%;
+
+  width:18px;
+  height:190%;
+
+  background:
+    rgba(255,255,255,.22);
+
+  transform:
+    rotate(15deg);
+
+  animation:
+    shimmer 5.5s linear infinite;
+}
+
+/* =========================
+   NEW MEMBER BOARD
+========================= */
+
+.member-status{
+  font:
+    700 9px/1.4
+    Arial,sans-serif;
+
+  letter-spacing:.7px;
+
+  color:var(--muted);
+
+  text-align:center;
+
+  padding:
+    5px 0 9px;
+}
+
+.member-status.error{
+  color:#ff8f8f;
+}
+
+.member-grid{
+  display:grid;
+
+  gap:8px;
+}
+
+.member{
+  display:grid;
+
+  grid-template-columns:
+    48px minmax(0,1fr) auto;
+
+  align-items:center;
+
+  gap:9px;
+
+  min-width:0;
+
+  padding:8px;
+
+  border:
+    1px solid rgba(255,206,0,.28);
+
+  border-left:
+    3px solid #dd0000;
+
+  border-radius:12px;
+
+  background:
+    linear-gradient(
+      90deg,
+      rgba(0,0,0,.88),
+      rgba(70,0,0,.48)
+    );
+
+  text-decoration:none;
+
+  color:var(--text);
+
+  transition:
+    transform .2s ease,
+    border-color .2s ease,
+    background .2s ease;
+}
+
+.member:hover{
+  transform:
+    translateX(2px);
+
+  border-color:
+    var(--gold);
+
+  background:
+    linear-gradient(
+      90deg,
+      rgba(0,0,0,.92),
+      rgba(105,0,0,.56)
+    );
+}
+
+.member-avatar{
+  width:48px;
+  height:48px;
+
+  border-radius:11px;
+
+  object-fit:cover;
+
+  border:
+    1px solid var(--gold);
+
+  background:#111;
+
+  box-shadow:
+    0 0 0 2px rgba(221,0,0,.18);
+}
+
+.member-fallback{
+  display:flex;
+
+  align-items:center;
+
+  justify-content:center;
+
+  font:
+    800 18px/1
+    Arial,sans-serif;
+
+  color:#111;
+
+  background:
+    linear-gradient(
+      135deg,
+      #dd0000,
+      #ffce00
+    );
+}
+
+.member-copy{
+  min-width:0;
+}
+
+.member-name{
+  overflow:hidden;
+
+  text-overflow:ellipsis;
+
+  white-space:nowrap;
+
+  font:
+    800 11px/1.2
+    Arial,sans-serif;
+
+  color:#fff;
+}
+
+.member-joined{
+  margin-top:4px;
+
+  font:
+    600 8px/1.25
+    Arial,sans-serif;
+
+  color:var(--muted);
+}
+
+.member-rating{
+  text-align:right;
+
+  min-width:55px;
+}
+
+.member-rating strong{
+  display:block;
+
+  color:var(--gold);
+
+  font:
+    900 14px/1
+    Arial,sans-serif;
+}
+
+.member-rating span{
+  display:block;
+
+  margin-top:3px;
+
+  color:#e6d99a;
+
+  font:
+    700 7px/1
+    Arial,sans-serif;
+
+  letter-spacing:.5px;
+
+  text-transform:uppercase;
+}
+
+.api-badge{
+  display:inline-flex;
+
+  align-items:center;
+
+  gap:4px;
+
+  font:
+    700 8px/1
+    Arial,sans-serif;
+
+  letter-spacing:.7px;
+
+  color:#111;
+
+  background:var(--gold);
+
+  padding:4px 6px;
+
+  border-radius:999px;
+}
+
+.member-retry{
+  appearance:none;
+
+  border:
+    1px solid var(--gold);
+
+  border-radius:9px;
+
+  background:#111;
+
+  color:var(--gold);
+
+  padding:7px 10px;
+
+  cursor:pointer;
+
+  font:
+    800 9px/1
+    Arial,sans-serif;
+}
+
+/* =========================
+   ACTIVITY SYSTEM
+========================= */
+
+.points{
+  display:grid;
+
+  gap:6px;
+}
+
+.point{
+  display:flex;
+
+  justify-content:
+    space-between;
+
+  gap:10px;
+
+  padding:7px 8px;
+
+  border-radius:9px;
+
+  background:
+    rgba(0,0,0,.45);
+
+  border:
+    1px solid rgba(255,255,255,.05);
+
+  font:
+    10px/1.3
+    Arial,sans-serif;
+}
+
+.point b{
+  color:#ffe174;
+}
+
+.point span:last-child{
+  color:#ffce00;
+
+  font-weight:700;
+}
+
+/* =========================
+   HONORS
+========================= */
+
+.feature{
+  display:grid;
+
+  grid-template-columns:
+    1fr 1fr;
+
+  gap:8px;
+}
+
+.mini{
+  padding:10px;
+
+  border-radius:11px;
+
+  background:
+    rgba(0,0,0,.48);
+
+  border:
+    1px solid rgba(255,206,0,.16);
+
+  text-align:center;
+}
+
+.mini b{
+  display:block;
+
+  color:#fff;
+
+  font-size:12px;
+}
+
+.mini span{
+  display:block;
+
+  margin-top:3px;
+
+  color:#aaa;
+
+  font:
+    9px Arial,sans-serif;
+}
+
+/* =========================
+   MILESTONES
+========================= */
+
+.milestones{
+  position:relative;
+
+  padding-left:17px;
+}
+
+.milestones::before{
+  content:"";
+
+  position:absolute;
+
+  left:5px;
+  top:4px;
+  bottom:4px;
+
+  width:1px;
+
+  background:
+    linear-gradient(
+      var(--red),
+      var(--gold)
+    );
+}
+
+.mile{
+  position:relative;
+
+  margin:
+    0 0 9px;
+
+  color:#cec7b8;
+
+  font:
+    10px/1.4
+    Arial,sans-serif;
+}
+
+.mile::before{
+  content:"";
+
+  position:absolute;
+
+  left:-15px;
+  top:4px;
+
+  width:6px;
+  height:6px;
+
+  border-radius:50%;
+
+  background:
+    var(--gold);
+
+  box-shadow:
+    0 0 8px rgba(255,206,0,.7);
+}
+
+.mile b{
+  color:#fff;
+}
+
+/* =========================
+   BUTTONS
+========================= */
+
+.cta{
+  display:inline-block;
+
+  text-decoration:none;
+
+  background:
+    linear-gradient(
+      135deg,
+      #dd0000,
+      #ffce00
+    );
+
+  color:#080808;
+
+  padding:
+    8px 10px;
+
+  border-radius:9px;
+
+  font:
+    700 9px
+    Arial,sans-serif;
+
+  letter-spacing:.7px;
+
+  transition:.2s ease;
+}
+
+.cta:hover{
+  transform:
+    translateY(-1px)
+    scale(1.015);
+
+  box-shadow:
+    0 0 22px rgba(255,206,0,.35);
+}
+
+/* =========================
+   ACFA
+========================= */
+
+.acfa{
+  padding:14px;
+
+  text-align:center;
+
+  background:
+    radial-gradient(
+      circle at 50% 20%,
+      rgba(255,206,0,.09),
+      rgba(0,0,0,.75) 65%
+    );
+}
+
+.acfa a{
+  display:inline-block;
+
+  border-radius:50%;
+
+  animation:
+    glow 3s ease-in-out infinite;
+}
+
+.acfa img{
+  display:block;
+
+  width:118px;
+  height:118px;
+
+  object-fit:contain;
+
+  border-radius:50%;
+
+  border:
+    2px solid #f3c85d;
+
+  box-shadow:
+    0 10px 26px rgba(0,0,0,.48);
+}
+
+.acfa p{
+  margin:
+    9px 8px 0;
+
+  color:#bcb5a7;
+
+  font:
+    10px/1.5
+    Arial,sans-serif;
+}
+
+.acfa strong{
+  color:#ffe589;
+}
+
+/* =========================
+   FOOTER
+========================= */
+
+footer{
+  padding:
+    3px 12px 15px;
+
+  text-align:center;
+
+  color:#777;
+
+  font:
+    8px/1.5
+    Arial,sans-serif;
+}
+
+@media(max-width:340px){
+
   .shell{
-    position:relative; z-index:1;
-    width:min(100%, 390px);
-    margin:0 auto;
-    padding:10px;
+    padding:5px;
   }
-  .dashboard{
-    position:relative;
-    overflow:hidden;
-    border:1px solid rgba(255,213,74,.78);
-    border-radius:24px;
-    background:linear-gradient(180deg,rgba(5,5,5,.86),rgba(8,5,3,.94));
-    box-shadow:var(--shadow), inset 0 0 45px rgba(255,166,0,.05);
-    backdrop-filter:blur(8px);
+
+  .links,
+  .feature{
+    grid-template-columns:1fr;
   }
-  .dashboard::after{
-    content:""; position:absolute; top:-30%; bottom:-30%; width:34px; left:-25%;
-    background:linear-gradient(90deg,transparent,rgba(255,255,255,.12),transparent);
-    transform:rotate(12deg); animation:sweep 10s linear infinite; pointer-events:none;
+
+  .club-logo{
+    width:82px;
+    height:82px;
   }
-  .topline{height:4px;background:linear-gradient(90deg,#5c2e00,var(--gold),#fff4a8,var(--gold2),#5c2e00);background-size:240% 100%;animation:barGlow 2.5s ease-in-out infinite}
-  .hero{position:relative;padding:18px 14px 14px;text-align:center;border-bottom:1px solid var(--line);overflow:hidden}
-  .hero::before{content:"";position:absolute;inset:-45% -20%;background:radial-gradient(circle,rgba(255,213,74,.17),transparent 50%);animation:pulse 4s ease-in-out infinite}
-  .club-logo{position:relative;width:96px;height:96px;border-radius:24px;object-fit:cover;border:2px solid var(--gold);box-shadow:0 0 0 5px rgba(255,213,74,.06),0 12px 30px rgba(0,0,0,.6);animation:float 5s ease-in-out infinite}
-  .eyebrow{position:relative;margin-top:11px;color:var(--gold);font:700 10px/1.2 Arial,sans-serif;letter-spacing:3px;text-transform:uppercase}
-  .hero h1{position:relative;margin:6px 0 3px;font-size:26px;line-height:1;letter-spacing:.5px;text-shadow:0 2px 0 #000,0 0 18px rgba(255,213,74,.22)}
-  .tagline{position:relative;color:#d9d3c4;font:italic 11px/1.5 Georgia,serif}
-  .live-row{position:relative;display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin-top:12px}
-  .chip{font:700 9px/1 Arial,sans-serif;letter-spacing:1px;text-transform:uppercase;padding:7px 9px;border-radius:999px;border:1px solid rgba(255,213,74,.35);background:rgba(255,213,74,.07);color:#ffe589}
-  .dot{display:inline-block;width:7px;height:7px;margin-right:5px;border-radius:50%;background:#6dff7a;box-shadow:0 0 10px #6dff7a;vertical-align:-1px;animation:pulse 1.4s infinite}
-  .langtabs{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:10px;background:rgba(0,0,0,.34);border-bottom:1px solid var(--line)}
-  .langtabs button{appearance:none;border:1px solid var(--line);background:#111;color:#bdb7a9;padding:9px 8px;border-radius:12px;font:700 10px/1 Arial,sans-serif;letter-spacing:1.5px;cursor:pointer;transition:.2s ease}
-  .langtabs button:hover{transform:translateY(-1px);border-color:var(--gold)}
-  .langtabs button.active{background:linear-gradient(135deg,var(--gold),#ffb300);color:#171000;border-color:#ffe47c;box-shadow:0 0 18px rgba(255,196,0,.25)}
-  .content{padding:10px}
-  .card{position:relative;margin-bottom:10px;border:1px solid var(--line);border-radius:16px;padding:13px;background:linear-gradient(145deg,rgba(255,255,255,.035),rgba(255,170,0,.025));overflow:hidden;box-shadow:inset 0 0 16px rgba(0,0,0,.28);transition:transform .22s ease,border-color .22s ease,box-shadow .22s ease}
-  .card:hover{transform:translateY(-2px);border-color:rgba(255,213,74,.78);box-shadow:0 10px 24px rgba(0,0,0,.25),inset 0 0 24px rgba(255,213,74,.04)}
-  .card::before{content:"";position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);opacity:.65}
-  .title{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px;color:var(--gold);font:700 10px/1.2 Arial,sans-serif;letter-spacing:2px;text-transform:uppercase}
-  .title small{font-size:8px;color:#8f887a;letter-spacing:1px}
-  .progress-meta{display:flex;align-items:end;justify-content:space-between;gap:10px}
-  .big{font:700 25px/1 Arial,sans-serif}.muted{color:#aaa;font:10px/1.4 Arial,sans-serif}
-  .track{position:relative;height:10px;margin-top:10px;border-radius:999px;background:#171717;border:1px solid #4b4334;overflow:hidden}
-  .fill{height:100%;width:50%;background:linear-gradient(90deg,#714300,#ffb300,#fff0a4);box-shadow:0 0 14px rgba(255,196,0,.6);animation:barGlow 2s ease-in-out infinite}
-  .ruler{margin-top:7px;text-align:right;color:#ffe174;font:700 10px Arial,sans-serif}
-  .owner{display:grid;grid-template-columns:64px 1fr;gap:11px;align-items:center}.owner img{width:64px;height:64px;border-radius:16px;border:1px solid var(--gold);object-fit:cover}.owner strong{font-size:13px}.quote{margin-top:4px;color:#9e998d;font:italic 10px/1.5 Georgia,serif}
-  .links{display:grid;grid-template-columns:1fr 1fr;gap:7px}.links a{position:relative;overflow:hidden;text-decoration:none;text-align:center;padding:9px 7px;border-radius:10px;border:1px solid rgba(255,213,74,.3);background:linear-gradient(135deg,rgba(255,213,74,.12),rgba(255,140,0,.06));color:#ffe58b;font:700 9px/1.2 Arial,sans-serif;letter-spacing:.6px;transition:.2s ease}.links a:hover{background:var(--gold);color:#160d00;transform:translateY(-1px)}
-  .links a::after{content:"";position:absolute;top:-40%;left:-40%;width:18px;height:190%;background:rgba(255,255,255,.28);transform:rotate(15deg);animation:shimmer 5.5s linear infinite}
-  .points{display:grid;gap:6px}.point{display:flex;justify-content:space-between;gap:10px;padding:7px 8px;border-radius:9px;background:rgba(255,255,255,.026);border:1px solid rgba(255,255,255,.04);font:10px/1.3 Arial,sans-serif}.point b{color:#ffe174}.point span:last-child{color:#dff602;font-weight:700}
-  .feature{display:grid;grid-template-columns:1fr 1fr;gap:8px}.mini{padding:10px;border-radius:11px;background:rgba(255,255,255,.025);border:1px solid rgba(255,213,74,.16);text-align:center}.mini b{display:block;color:#fff;font-size:12px}.mini span{display:block;margin-top:3px;color:#8f887a;font:9px Arial,sans-serif}
-  .milestones{position:relative;padding-left:17px}.milestones::before{content:"";position:absolute;left:5px;top:4px;bottom:4px;width:1px;background:linear-gradient(var(--gold),rgba(255,213,74,.08))}.mile{position:relative;margin:0 0 9px;color:#cec7b8;font:10px/1.4 Arial,sans-serif}.mile::before{content:"";position:absolute;left:-15px;top:4px;width:6px;height:6px;border-radius:50%;background:var(--gold);box-shadow:0 0 8px rgba(255,213,74,.7)}.mile b{color:#fff}
-  .cta{display:inline-block;text-decoration:none;background:linear-gradient(135deg,var(--gold),#ffb300);color:#160d00;padding:8px 10px;border-radius:9px;font:700 9px Arial,sans-serif;letter-spacing:.7px;box-shadow:0 0 16px rgba(255,190,0,.18);transition:.2s ease}.cta:hover{transform:translateY(-1px) scale(1.015);box-shadow:0 0 22px rgba(255,190,0,.35)}
-  .acfa{padding:14px;text-align:center;background:radial-gradient(circle at 50% 20%,rgba(255,213,74,.09),transparent 60%)}
-  .acfa a{display:inline-block;border-radius:50%;animation:glow 3s ease-in-out infinite}
-  .acfa img{display:block;width:118px;height:118px;object-fit:cover;border-radius:50%;border:2px solid #f3c85d;box-shadow:0 10px 26px rgba(0,0,0,.48)}
-  .acfa p{margin:9px 8px 0;color:#bcb5a7;font:10px/1.5 Arial,sans-serif}.acfa strong{color:#ffe589}
-  footer{padding:3px 12px 15px;text-align:center;color:#645e54;font:8px/1.5 Arial,sans-serif;letter-spacing:1px;text-transform:uppercase}
-  [data-lang]{display:none}.lang-en [data-lang="en"],.lang-de [data-lang="de"]{display:initial}.lang-en div[data-lang="en"],.lang-de div[data-lang="de"]{display:block}.lang-en span[data-lang="en"],.lang-de span[data-lang="de"]{display:inline}
-  .time-panel{position:relative;margin:14px auto 0;max-width:285px;padding:11px 12px;border:1px solid rgba(255,215,0,.42);border-radius:14px;background:linear-gradient(135deg,rgba(0,0,0,.58),rgba(255,215,0,.075));box-shadow:inset 0 0 18px rgba(255,215,0,.05),0 0 22px rgba(255,215,0,.08);overflow:hidden}
-  .time-panel::before{content:"";position:absolute;inset:0;background:linear-gradient(110deg,transparent 20%,rgba(255,255,255,.09) 45%,transparent 70%);transform:translateX(-130%);animation:timeSweep 5.5s ease-in-out infinite}
-  .greeting{position:relative;color:#ffe477;font-size:12px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;margin-bottom:4px;text-shadow:0 0 12px rgba(255,215,0,.25)}
-  .browser-clock{position:relative;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:25px;font-weight:900;letter-spacing:1px;color:#fff;line-height:1.05;text-shadow:0 0 14px rgba(255,215,0,.28)}
-  .browser-date{position:relative;margin-top:5px;color:#aaa;font-size:10px;letter-spacing:.5px}
-  @keyframes timeSweep{0%,58%{transform:translateX(-130%)}78%,100%{transform:translateX(130%)}}
-  @media(max-width:360px){.shell{padding:6px}.dashboard{border-radius:18px}.hero h1{font-size:23px}.links{grid-template-columns:1fr}.feature{grid-template-columns:1fr}}
-  @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;scroll-behavior:auto!important;transition:none!important}}
+
+  .hero h1{
+    font-size:24px;
+  }
+}
+
+@media(prefers-reduced-motion:reduce){
+
+  *,
+  *::before,
+  *::after{
+    animation-duration:.001ms!important;
+    animation-iteration-count:1!important;
+  }
+}
+
 </style>
 </head>
+
 <body class="lang-en">
+
 <div class="embers"></div>
+
 <div class="shell">
-  <main class="dashboard" id="dashboard">
-    <div class="topline"></div>
 
-    <section class="hero">
-      <img class="club-logo" src="assets/club-logo.png" alt="Entenhausen club emblem" />
-      <div class="eyebrow">ENTENHAUSEN • ADVANCED DASHBOARD</div>
-      <h1>Entenhausen</h1>
-      <div class="tagline">
-        <span data-lang="en">A legendary chess community built on activity, competition and character.</span>
-        <span data-lang="de">Eine legendäre Schachgemeinschaft voller Aktivität, Wettbewerb und Charakter.</span>
-      </div>
-      <div class="live-row">
-        <span class="chip"><span class="dot"></span><span data-lang="en">Community Live</span><span data-lang="de">Community Aktiv</span></span>
-        <span class="chip">♟ Chess.com</span>
-        <span class="chip">⚡ Competitive</span>
-      </div>
-      <div class="time-panel" aria-live="polite">
-        <div class="greeting" id="greeting">Welcome to Entenhausen</div>
-        <div class="browser-clock" id="browserClock">--:--:--</div>
-        <div class="browser-date" id="browserDate"></div>
-      </div>
-    </section>
+<main
+  class="dashboard"
+  id="dashboard"
+>
 
-    <nav class="langtabs" aria-label="Language switcher">
-      <button id="enBtn" class="active" type="button">🇺🇸 VIEW IN ENGLISH</button>
-      <button id="deBtn" type="button">🇩🇪 AUF DEUTSCH</button>
-    </nav>
+<div class="topline"></div>
 
-    <div class="content">
-      <section class="card">
-        <div class="title"><span>🚀 <span data-lang="en">Road to 1,000 Members</span><span data-lang="de">Weg zu 1.000 Mitgliedern</span></span><small>50%</small></div>
-        <div class="progress-meta"><div><span class="big">500</span> <span class="muted">/ 1,000</span></div><div class="muted"><span data-lang="en">NEXT GOAL</span><span data-lang="de">NÄCHSTES ZIEL</span></div></div>
-        <div class="track"><div class="fill"></div></div>
-        <div class="ruler"><span data-lang="en">Halfway to the crown.</span><span data-lang="de">Halbzeit bis zur Krone.</span></div>
-      </section>
+<!-- =========================
+     HERO
+========================= -->
 
-      <section class="card">
-        <div class="title"><span>👑 <span data-lang="en">The Throne Room</span><span data-lang="de">Der Thronsaal</span></span><small><span data-lang="en">OWNER</span><span data-lang="de">INHABER</span></small></div>
-        <div class="owner">
-          <img src="https://images.chesscomfiles.com/uploads/v1/images_users/tiny_mce/Kissenschlach/phpctdbdllf8nm65q9Sat4.jpg" alt="Owner avatar" />
-          <div>
-            <strong><span data-lang="en">Sovereign Owner</span><span data-lang="de">Souveräner Besitzer</span>: <span style="color:#f1c40f">@Kissenschlach</span></strong>
-            <div class="quote"><span data-lang="en">“Ruling the file with absolute precision.”</span><span data-lang="de">„Regiert die Linie mit absoluter Präzision.“</span></div>
-          </div>
-        </div>
-      </section>
+<section class="hero">
 
-      <section class="card">
-        <div class="title"><span>🔗 <span data-lang="en">Quick Links</span><span data-lang="de">Schnellzugriff</span></span><small><span data-lang="en">OPEN</span><span data-lang="de">ÖFFNEN</span></small></div>
-        <div class="links">
-          <a href="https://lichess.org/streak" target="_blank" rel="noopener">⚡ <span data-lang="en">PUZZLE STREAK</span><span data-lang="de">PUZZLE-SERIE</span></a>
-          <a href="https://www.chess.com/daily" target="_blank" rel="noopener">🧩 <span data-lang="en">DAILY PUZZLES</span><span data-lang="de">TÄGLICHE PUZZLES</span></a>
-          <a href="https://www.chesswrap.me" target="_blank" rel="noopener">📊 <span data-lang="en">2025 RECAP</span><span data-lang="de">2025 RÜCKBLICK</span></a>
-          <a href="https://www.chess.com/clubs/forum/view/guess-the-elo-regeln" target="_blank" rel="noopener">🎯 <span data-lang="en">GUESS THE ELO</span><span data-lang="de">ELO ERRATEN</span></a>
-          <a href="https://www.chess.com/club/entenhausen/announcements" target="_blank" rel="noopener">📢 <span data-lang="en">CLUB NEWS</span><span data-lang="de">CLUB-NEWS</span></a>
-        </div>
-      </section>
+<img
+  class="club-logo"
+  src="assets/club-logo.png"
+  alt="Entenhausen club emblem"
+>
 
-      <section class="card">
-        <div class="title"><span>⚡ <span data-lang="en">Activity System</span><span data-lang="de">Aktivitätssystem</span></span><small><span data-lang="en">POINTS</span><span data-lang="de">PUNKTE</span></small></div>
-        <div class="points">
-          <div class="point"><b>🏆 <span data-lang="en">Arena Victory</span><span data-lang="de">Arena-Sieg</span></b><span>+40</span></div>
-          <div class="point"><b>🥈 <span data-lang="en">2nd Place</span><span data-lang="de">2. Platz</span></b><span>+25</span></div>
-          <div class="point"><b>🥉 <span data-lang="en">3rd Place</span><span data-lang="de">3. Platz</span></b><span>+15</span></div>
-          <div class="point"><b>🎯 <span data-lang="en">Top 30%</span><span data-lang="de">Top 30%</span></b><span>+5</span></div>
-          <div class="point"><b>🔥 <span data-lang="en">Daily Match Win</span><span data-lang="de">Sieg im Tagesmatch</span></b><span>+15</span></div>
-          <div class="point"><b>🤝 <span data-lang="en">Team Battle</span><span data-lang="de">Teamkampf</span></b><span>+5</span></div>
-          <div class="point"><b>💎 <span data-lang="en">10 Club Games / Week</span><span data-lang="de">10 Clubpartien / Woche</span></b><span>+20</span></div>
-        </div>
-      </section>
-
-      <section class="card">
-        <div class="title"><span>🛡️ <span data-lang="en">Hall of Distinction</span><span data-lang="de">Halle der Auszeichnung</span></span><small><span data-lang="en">HONORS</span><span data-lang="de">EHREN</span></small></div>
-        <div class="feature">
-          <div class="mini"><b>🏅 @OfficiaIBlogger</b><span><span data-lang="en">Nobility of the Month</span><span data-lang="de">Adel des Monats</span></span></div>
-          <div class="mini"><b><span style="background:#ba372a;padding:2px 4px">NM</span> @CanidateMaster</b><span><span data-lang="en">Titled Player</span><span data-lang="de">Titelträger</span></span></div>
-        </div>
-      </section>
-
-      <section class="card">
-        <div class="title"><span>🤝 <span data-lang="en">Partnerships</span><span data-lang="de">Partnerschaften</span></span><small><span data-lang="en">ALLIES</span><span data-lang="de">VERBÜNDETE</span></small></div>
-        <div class="links">
-          <a href="https://www.chess.com/club/kissenschlach-community" target="_blank" rel="noopener">♜ <span data-lang="en">PARTNERSHIP 1</span><span data-lang="de">PARTNERSCHAFT 1</span></a>
-          <a href="https://www.chess.com/club/the-paradise-chess-club" target="_blank" rel="noopener">♜ <span data-lang="en">PARTNERSHIP 2</span><span data-lang="de">PARTNERSCHAFT 2</span></a>
-        </div>
-      </section>
-
-      <section class="card">
-        <div class="title"><span>🏆 <span data-lang="en">Club Milestones</span><span data-lang="de">Club-Meilensteine</span></span><small><span data-lang="en">LEGACY</span><span data-lang="de">VERMÄCHTNIS</span></small></div>
-        <div class="milestones">
-          <div class="mile"><b>150 <span data-lang="en">members</span><span data-lang="de">Mitglieder</span></b> — 09 Nov 2025</div>
-          <div class="mile"><b>200 <span data-lang="en">members</span><span data-lang="de">Mitglieder</span></b> — 04 Jan 2026</div>
-          <div class="mile"><b>300</b> — <span data-lang="en">accomplished 🎉</span><span data-lang="de">erreicht 🎉</span></div>
-          <div class="mile"><b>400</b> — <span data-lang="en">accomplished 🎉</span><span data-lang="de">erreicht 🎉</span></div>
-          <div class="mile"><b>500</b> — <span data-lang="en">achieved at speed ⚡</span><span data-lang="de">rasant erreicht ⚡</span></div>
-          <div class="mile"><b>1,000</b> — <span style="color:#ffe174"><span data-lang="en">THE NEXT CROWN 🚀</span><span data-lang="de">DIE NÄCHSTE KRONE 🚀</span></span></div>
-        </div>
-      </section>
-
-      <section class="card">
-        <div class="title"><span>⚖️ <span data-lang="en">Laws of the Court</span><span data-lang="de">Gesetze des Hofes</span></span><small><span data-lang="en">RULES</span><span data-lang="de">REGELN</span></small></div>
-        <p class="muted" style="margin:0 0 10px"><span data-lang="en">Maintain the court's dignity. Honor the crown. Compete hard and respect every player.</span><span data-lang="de">Wahrt die Würde des Hofes. Ehrt die Krone. Spielt entschlossen und respektiert jeden Spieler.</span></p>
-        <a class="cta" href="https://www.chess.com/clubs/forum/view/rules-2225-1" target="_blank" rel="noopener">🧐 <span data-lang="en">VIEW LAWS</span><span data-lang="de">REGELN ANSEHEN</span></a>
-      </section>
-
-      <section class="card">
-        <div class="title"><span>📢 <span data-lang="en">Advertising Hall</span><span data-lang="de">Werbehalle</span></span><small><span data-lang="en">FORUM</span><span data-lang="de">FORUM</span></small></div>
-        <p class="muted" style="margin:0 0 10px"><span data-lang="en">Use the designated forum for approved promotions and community advertising.</span><span data-lang="de">Nutzt das vorgesehene Forum für genehmigte Werbung und Community-Hinweise.</span></p>
-        <a class="cta" href="https://www.chess.com/clubs/forum/view/advertising-forum-796-1" target="_blank" rel="noopener">📣 <span data-lang="en">ADVERTISING FORUM</span><span data-lang="de">WERBEFORUM</span></a>
-      </section>
-
-      <section class="card acfa">
-        <div class="title" style="justify-content:center"><span>⚜ <span data-lang="en">Presented with ACFA</span><span data-lang="de">Präsentiert mit ACFA</span> ⚜</span></div>
-        <a href="https://www.chess.com/club/and-chess-for-all" target="_blank" rel="noopener" title="Join And Chess For All">
-          <img src="assets/acfa-logo.png" alt="And Chess For All" />
-        </a>
-        <p><strong><span data-lang="en">Click the ACFA emblem to join And Chess For All.</span><span data-lang="de">Klicke auf das ACFA-Emblem, um And Chess For All beizutreten.</span></strong><br><span data-lang="en">No duplicate Entenhausen join link is included.</span><span data-lang="de">Es ist kein doppelter Beitrittslink für Entenhausen enthalten.</span></p>
-      </section>
-    </div>
-
-    <footer>
-      <span data-lang="en">Original sidebar by @Kissenschlach • Advanced dashboard upgrade by ACFA Sidebar Academy</span>
-      <span data-lang="de">Originale Sidebar von @Kissenschlach • Erweiterung zum fortgeschrittenen Dashboard durch die ACFA Sidebar Academy</span>
-    </footer>
-  </main>
+<div class="eyebrow">
+ENTENHAUSEN • ADVANCED DASHBOARD
 </div>
+
+<h1>
+Entenhausen
+</h1>
+
+<div class="tagline">
+
+<span data-lang="en">
+A legendary chess community built on activity,
+competition and character.
+</span>
+
+<span data-lang="de">
+Eine legendäre Schachgemeinschaft voller Aktivität,
+Wettbewerb und Charakter.
+</span>
+
+</div>
+
+<div class="live-row">
+
+<span class="chip">
+
+<span class="dot"></span>
+
+<span data-lang="en">
+Community Live
+</span>
+
+<span data-lang="de">
+Community Aktiv
+</span>
+
+</span>
+
+<span class="chip">
+♟ CHESS.COM
+</span>
+
+<span class="chip">
+
+⚡
+
+<span data-lang="en">
+Competitive
+</span>
+
+<span data-lang="de">
+Wettbewerb
+</span>
+
+</span>
+
+</div>
+
+<!-- LIVE BROWSER CLOCK -->
+
+<div
+  class="time-panel"
+  aria-live="polite"
+>
+
+<div
+  class="greeting"
+  id="greeting"
+>
+Welcome to Entenhausen
+</div>
+
+<div
+  class="browser-clock"
+  id="browserClock"
+>
+--:--:--
+</div>
+
+<div
+  class="browser-date"
+  id="browserDate"
+></div>
+
+</div>
+
+</section>
+
+<!-- =========================
+     LANGUAGE
+========================= -->
+
+<nav
+  class="langtabs"
+  aria-label="Language switcher"
+>
+
+<button
+  id="enBtn"
+  class="active"
+  type="button"
+>
+🇺🇸 VIEW IN ENGLISH
+</button>
+
+<button
+  id="deBtn"
+  type="button"
+>
+🇩🇪 AUF DEUTSCH
+</button>
+
+</nav>
+
+<div class="content">
+
+<!-- =========================
+     MEMBER GOAL
+========================= -->
+
+<section class="card">
+
+<div class="title">
+
+<span>
+🚀
+<span data-lang="en">
+Road to 1,000 Members
+</span>
+
+<span data-lang="de">
+Weg zu 1.000 Mitgliedern
+</span>
+</span>
+
+<small>
+50%
+</small>
+
+</div>
+
+<div class="progress-meta">
+
+<div>
+
+<span class="big">
+500
+</span>
+
+<span class="muted">
+/ 1,000
+</span>
+
+</div>
+
+<div class="muted">
+
+<span data-lang="en">
+NEXT GOAL
+</span>
+
+<span data-lang="de">
+NÄCHSTES ZIEL
+</span>
+
+</div>
+
+</div>
+
+<div class="track">
+<div class="fill"></div>
+</div>
+
+<div class="ruler">
+
+<span data-lang="en">
+Halfway to the crown.
+</span>
+
+<span data-lang="de">
+Halbzeit bis zur Krone.
+</span>
+
+</div>
+
+</section>
+
+<!-- =========================
+     OWNER
+========================= -->
+
+<section class="card">
+
+<div class="title">
+
+<span>
+
+👑
+
+<span data-lang="en">
+The Throne Room
+</span>
+
+<span data-lang="de">
+Der Thronsaal
+</span>
+
+</span>
+
+<small>
+
+<span data-lang="en">
+OWNER
+</span>
+
+<span data-lang="de">
+INHABER
+</span>
+
+</small>
+
+</div>
+
+<div class="owner">
+
+<img
+src="https://images.chesscomfiles.com/uploads/v1/images_users/tiny_mce/Kissenschlach/phpctdbdllf8nm65q9Sat4.jpg"
+alt="Owner avatar"
+>
+
+<div>
+
+<strong>
+
+<span data-lang="en">
+Sovereign Owner
+</span>
+
+<span data-lang="de">
+Souveräner Besitzer
+</span>
+
+:
+
+<span style="color:#ffce00">
+@Kissenschlach
+</span>
+
+</strong>
+
+<div class="quote">
+
+<span data-lang="en">
+“Ruling the file with absolute precision.”
+</span>
+
+<span data-lang="de">
+„Regiert die Linie mit absoluter Präzision.“
+</span>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- =========================
+     NEWEST MEMBERS API
+========================= -->
+
+<section
+  class="card"
+  id="newMemberBoard"
+>
+
+<div class="title">
+
+<span>
+
+🆕
+
+<span data-lang="en">
+Newest Members
+</span>
+
+<span data-lang="de">
+Neueste Mitglieder
+</span>
+
+</span>
+
+<small class="api-badge">
+CHESS.COM API
+</small>
+
+</div>
+
+<div
+  class="member-status"
+  id="memberStatus"
+>
+
+<span data-lang="en">
+Loading the newest club members…
+</span>
+
+<span data-lang="de">
+Neueste Clubmitglieder werden geladen…
+</span>
+
+</div>
+
+<div
+  class="member-grid"
+  id="memberGrid"
+  aria-live="polite"
+></div>
+
+</section>
+
+<!-- =========================
+     QUICK LINKS
+========================= -->
+
+<section class="card">
+
+<div class="title">
+
+<span>
+
+🔗
+
+<span data-lang="en">
+Quick Links
+</span>
+
+<span data-lang="de">
+Schnellzugriff
+</span>
+
+</span>
+
+<small>
+
+<span data-lang="en">
+OPEN
+</span>
+
+<span data-lang="de">
+ÖFFNEN
+</span>
+
+</small>
+
+</div>
+
+<div class="links">
+
+<a
+href="https://lichess.org/streak"
+target="_blank"
+rel="noopener"
+>
+
+⚡
+
+<span data-lang="en">
+PUZZLE STREAK
+</span>
+
+<span data-lang="de">
+PUZZLE-SERIE
+</span>
+
+</a>
+
+<a
+href="https://www.chess.com/daily"
+target="_blank"
+rel="noopener"
+>
+
+🧩
+
+<span data-lang="en">
+DAILY PUZZLES
+</span>
+
+<span data-lang="de">
+TÄGLICHE PUZZLES
+</span>
+
+</a>
+
+<a
+href="https://www.chesswrap.me"
+target="_blank"
+rel="noopener"
+>
+
+📊
+
+<span data-lang="en">
+2025 RECAP
+</span>
+
+<span data-lang="de">
+2025 RÜCKBLICK
+</span>
+
+</a>
+
+<a
+href="https://www.chess.com/clubs/forum/view/guess-the-elo-regeln"
+target="_blank"
+rel="noopener"
+>
+
+🎯
+
+<span data-lang="en">
+GUESS THE ELO
+</span>
+
+<span data-lang="de">
+ELO ERRATEN
+</span>
+
+</a>
+
+<a
+href="https://www.chess.com/club/entenhausen/announcements"
+target="_blank"
+rel="noopener"
+>
+
+📢
+
+<span data-lang="en">
+CLUB NEWS
+</span>
+
+<span data-lang="de">
+CLUB-NEWS
+</span>
+
+</a>
+
+</div>
+
+</section>
+
+<!-- =========================
+     ACTIVITY
+========================= -->
+
+<section class="card">
+
+<div class="title">
+
+<span>
+
+⚡
+
+<span data-lang="en">
+Activity System
+</span>
+
+<span data-lang="de">
+Aktivitätssystem
+</span>
+
+</span>
+
+<small>
+
+<span data-lang="en">
+POINTS
+</span>
+
+<span data-lang="de">
+PUNKTE
+</span>
+
+</small>
+
+</div>
+
+<div class="points">
+
+<div class="point">
+
+<b>
+
+🏆
+
+<span data-lang="en">
+Arena Victory
+</span>
+
+<span data-lang="de">
+Arena-Sieg
+</span>
+
+</b>
+
+<span>
++40
+</span>
+
+</div>
+
+<div class="point">
+
+<b>
+
+🥈
+
+<span data-lang="en">
+2nd Place
+</span>
+
+<span data-lang="de">
+2. Platz
+</span>
+
+</b>
+
+<span>
++25
+</span>
+
+</div>
+
+<div class="point">
+
+<b>
+
+🥉
+
+<span data-lang="en">
+3rd Place
+</span>
+
+<span data-lang="de">
+3. Platz
+</span>
+
+</b>
+
+<span>
++15
+</span>
+
+</div>
+
+<div class="point">
+
+<b>
+
+🎯 Top 30%
+
+</b>
+
+<span>
++5
+</span>
+
+</div>
+
+<div class="point">
+
+<b>
+
+🔥
+
+<span data-lang="en">
+Daily Match Win
+</span>
+
+<span data-lang="de">
+Sieg im Tagesmatch
+</span>
+
+</b>
+
+<span>
++15
+</span>
+
+</div>
+
+<div class="point">
+
+<b>
+
+🤝
+
+<span data-lang="en">
+Team Battle
+</span>
+
+<span data-lang="de">
+Teamkampf
+</span>
+
+</b>
+
+<span>
++5
+</span>
+
+</div>
+
+<div class="point">
+
+<b>
+
+💎
+
+<span data-lang="en">
+10 Club Games / Week
+</span>
+
+<span data-lang="de">
+10 Clubpartien / Woche
+</span>
+
+</b>
+
+<span>
++20
+</span>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- =========================
+     HONORS
+========================= -->
+
+<section class="card">
+
+<div class="title">
+
+<span>
+
+🛡️
+
+<span data-lang="en">
+Hall of Distinction
+</span>
+
+<span data-lang="de">
+Halle der Auszeichnung
+</span>
+
+</span>
+
+<small>
+
+<span data-lang="en">
+HONORS
+</span>
+
+<span data-lang="de">
+EHREN
+</span>
+
+</small>
+
+</div>
+
+<div class="feature">
+
+<div class="mini">
+
+<b>
+🏅 @OfficiaIBlogger
+</b>
+
+<span>
+
+<span data-lang="en">
+Nobility of the Month
+</span>
+
+<span data-lang="de">
+Adel des Monats
+</span>
+
+</span>
+
+</div>
+
+<div class="mini">
+
+<b>
+
+<span style="background:#ba372a;padding:2px 4px">
+NM
+</span>
+
+@CanidateMaster
+
+</b>
+
+<span>
+
+<span data-lang="en">
+Titled Player
+</span>
+
+<span data-lang="de">
+Titelträger
+</span>
+
+</span>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- =========================
+     PARTNERS
+========================= -->
+
+<section class="card">
+
+<div class="title">
+
+<span>
+
+🤝
+
+<span data-lang="en">
+Partnerships
+</span>
+
+<span data-lang="de">
+Partnerschaften
+</span>
+
+</span>
+
+<small>
+
+<span data-lang="en">
+ALLIES
+</span>
+
+<span data-lang="de">
+VERBÜNDETE
+</span>
+
+</small>
+
+</div>
+
+<div class="links">
+
+<a
+href="https://www.chess.com/club/kissenschlach-community"
+target="_blank"
+rel="noopener"
+>
+
+♜
+
+<span data-lang="en">
+PARTNERSHIP 1
+</span>
+
+<span data-lang="de">
+PARTNERSCHAFT 1
+</span>
+
+</a>
+
+<a
+href="https://www.chess.com/club/the-paradise-chess-club"
+target="_blank"
+rel="noopener"
+>
+
+♜
+
+<span data-lang="en">
+PARTNERSHIP 2
+</span>
+
+<span data-lang="de">
+PARTNERSCHAFT 2
+</span>
+
+</a>
+
+</div>
+
+</section>
+
+<!-- =========================
+     MILESTONES
+========================= -->
+
+<section class="card">
+
+<div class="title">
+
+<span>
+
+🏆
+
+<span data-lang="en">
+Club Milestones
+</span>
+
+<span data-lang="de">
+Club-Meilensteine
+</span>
+
+</span>
+
+<small>
+
+<span data-lang="en">
+LEGACY
+</span>
+
+<span data-lang="de">
+VERMÄCHTNIS
+</span>
+
+</small>
+
+</div>
+
+<div class="milestones">
+
+<div class="mile">
+
+<b>
+150
+<span data-lang="en">
+members
+</span>
+
+<span data-lang="de">
+Mitglieder
+</span>
+</b>
+
+— 09 Nov 2025
+
+</div>
+
+<div class="mile">
+
+<b>
+200
+<span data-lang="en">
+members
+</span>
+
+<span data-lang="de">
+Mitglieder
+</span>
+</b>
+
+— 04 Jan 2026
+
+</div>
+
+<div class="mile">
+
+<b>
+300
+</b>
+
+—
+
+<span data-lang="en">
+accomplished 🎉
+</span>
+
+<span data-lang="de">
+erreicht 🎉
+</span>
+
+</div>
+
+<div class="mile">
+
+<b>
+400
+</b>
+
+—
+
+<span data-lang="en">
+accomplished 🎉
+</span>
+
+<span data-lang="de">
+erreicht 🎉
+</span>
+
+</div>
+
+<div class="mile">
+
+<b>
+500
+</b>
+
+—
+
+<span data-lang="en">
+achieved at speed ⚡
+</span>
+
+<span data-lang="de">
+rasant erreicht ⚡
+</span>
+
+</div>
+
+<div class="mile">
+
+<b>
+1,000
+</b>
+
+—
+
+<span style="color:#ffe174">
+
+<span data-lang="en">
+THE NEXT CROWN 🚀
+</span>
+
+<span data-lang="de">
+DIE NÄCHSTE KRONE 🚀
+</span>
+
+</span>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- =========================
+     LAWS
+========================= -->
+
+<section class="card">
+
+<div class="title">
+
+<span>
+
+⚖️
+
+<span data-lang="en">
+Laws of the Court
+</span>
+
+<span data-lang="de">
+Gesetze des Hofes
+</span>
+
+</span>
+
+<small>
+
+<span data-lang="en">
+RULES
+</span>
+
+<span data-lang="de">
+REGELN
+</span>
+
+</small>
+
+</div>
+
+<p
+class="muted"
+style="margin:0 0 10px"
+>
+
+<span data-lang="en">
+Maintain the court's dignity.
+Honor the crown.
+Compete hard and respect every player.
+</span>
+
+<span data-lang="de">
+Wahrt die Würde des Hofes.
+Ehrt die Krone.
+Spielt entschlossen und respektiert jeden Spieler.
+</span>
+
+</p>
+
+<a
+class="cta"
+href="https://www.chess.com/clubs/forum/view/rules-2225-1"
+target="_blank"
+rel="noopener"
+>
+
+🧐
+
+<span data-lang="en">
+VIEW LAWS
+</span>
+
+<span data-lang="de">
+REGELN ANSEHEN
+</span>
+
+</a>
+
+</section>
+
+<!-- =========================
+     ADVERTISING
+========================= -->
+
+<section class="card">
+
+<div class="title">
+
+<span>
+
+📢
+
+<span data-lang="en">
+Advertising Hall
+</span>
+
+<span data-lang="de">
+Werbehalle
+</span>
+
+</span>
+
+<small>
+FORUM
+</small>
+
+</div>
+
+<p
+class="muted"
+style="margin:0 0 10px"
+>
+
+<span data-lang="en">
+Use the designated forum for approved promotions
+and community advertising.
+</span>
+
+<span data-lang="de">
+Nutzt das vorgesehene Forum für genehmigte Werbung
+und Community-Hinweise.
+</span>
+
+</p>
+
+<a
+class="cta"
+href="https://www.chess.com/clubs/forum/view/advertising-forum-796-1"
+target="_blank"
+rel="noopener"
+>
+
+📣
+
+<span data-lang="en">
+ADVERTISING FORUM
+</span>
+
+<span data-lang="de">
+WERBEFORUM
+</span>
+
+</a>
+
+</section>
+
+<!-- =========================
+     ACFA
+========================= -->
+
+<section class="card acfa">
+
+<div
+class="title"
+style="justify-content:center"
+>
+
+<span>
+
+⚜
+
+<span data-lang="en">
+Presented with ACFA
+</span>
+
+<span data-lang="de">
+Präsentiert mit ACFA
+</span>
+
+⚜
+
+</span>
+
+</div>
+
+<a
+href="https://www.chess.com/club/and-chess-for-all"
+target="_blank"
+rel="noopener"
+title="Join And Chess For All"
+>
+
+<img
+src="assets/acfa-logo.png"
+alt="And Chess For All"
+>
+
+</a>
+
+<p>
+
+<strong>
+
+<span data-lang="en">
+Click the ACFA emblem to join And Chess For All.
+</span>
+
+<span data-lang="de">
+Klicke auf das ACFA-Emblem,
+um And Chess For All beizutreten.
+</span>
+
+</strong>
+
+</p>
+
+</section>
+
+</div>
+
+<footer>
+
+<span data-lang="en">
+Original sidebar by @Kissenschlach •
+Advanced dashboard upgrade by ACFA Sidebar Academy
+</span>
+
+<span data-lang="de">
+Originale Sidebar von @Kissenschlach •
+Erweiterung zum fortgeschrittenen Dashboard
+durch die ACFA Sidebar Academy
+</span>
+
+</footer>
+
+</main>
+
+</div>
+
 <script>
 (() => {
-  const body = document.body;
-  const en = document.getElementById('enBtn');
-  const de = document.getElementById('deBtn');
-  function setLang(lang){
-    const isDe = lang === 'de';
-    body.classList.toggle('lang-de', isDe);
-    body.classList.toggle('lang-en', !isDe);
-    en.classList.toggle('active', !isDe);
-    de.classList.toggle('active', isDe);
-    document.documentElement.lang = lang;
-    localStorage.setItem('entenhausen-lang', lang);
-    updateClock();
-  }
 
-  const clockEl = document.getElementById('browserClock');
-  const dateEl = document.getElementById('browserDate');
-  const greetingEl = document.getElementById('greeting');
+const body =
+document.body;
 
-  function updateClock(){
-    const now = new Date();
-    const isDe = body.classList.contains('lang-de');
-    const hour = now.getHours();
-    let greeting;
-    if (hour >= 5 && hour < 12) greeting = isDe ? 'Guten Morgen aus Entenhausen' : 'Good morning from Entenhausen';
-    else if (hour >= 12 && hour < 17) greeting = isDe ? 'Guten Tag aus Entenhausen' : 'Good afternoon from Entenhausen';
-    else if (hour >= 17 && hour < 22) greeting = isDe ? 'Guten Abend aus Entenhausen' : 'Good evening from Entenhausen';
-    else greeting = isDe ? 'Gute Nacht aus Entenhausen' : 'Good night from Entenhausen';
+const en =
+document.getElementById("enBtn");
 
-    greetingEl.textContent = greeting;
-    clockEl.textContent = now.toLocaleTimeString(isDe ? 'de-DE' : 'en-US', {hour:'2-digit', minute:'2-digit', second:'2-digit'});
-    dateEl.textContent = now.toLocaleDateString(isDe ? 'de-DE' : 'en-US', {weekday:'long', year:'numeric', month:'long', day:'numeric'});
-  }
-  en.addEventListener('click', () => setLang('en'));
-  de.addEventListener('click', () => setLang('de'));
-  setLang(localStorage.getItem('entenhausen-lang') || 'en');
-  updateClock();
-  setInterval(updateClock, 1000);
+const de =
+document.getElementById("deBtn");
 
-  const dash = document.getElementById('dashboard');
-  if (matchMedia('(pointer:fine)').matches) {
-    dash.addEventListener('mousemove', (e) => {
-      const r = dash.getBoundingClientRect();
-      const x = (e.clientX - r.left) / r.width - .5;
-      const y = (e.clientY - r.top) / r.height - .5;
-      dash.style.transform = `perspective(1200px) rotateY(${x*1.1}deg) rotateX(${-y*.55}deg)`;
-    });
-    dash.addEventListener('mouseleave', () => dash.style.transform = '');
-  }
+const clockEl =
+document.getElementById("browserClock");
+
+const dateEl =
+document.getElementById("browserDate");
+
+const greetingEl =
+document.getElementById("greeting");
+
+const memberGrid =
+document.getElementById("memberGrid");
+
+const memberStatus =
+document.getElementById("memberStatus");
+
+/* =========================
+   LANGUAGE
+========================= */
+
+function currentLang(){
+
+return body.classList.contains("lang-de")
+? "de"
+: "en";
+
+}
+
+function setLang(lang){
+
+const isDe =
+lang === "de";
+
+body.classList.toggle(
+"lang-de",
+isDe
+);
+
+body.classList.toggle(
+"lang-en",
+!isDe
+);
+
+en.classList.toggle(
+"active",
+!isDe
+);
+
+de.classList.toggle(
+"active",
+isDe
+);
+
+document.documentElement.lang =
+lang;
+
+try{
+
+localStorage.setItem(
+"entenhausen-lang",
+lang
+);
+
+}catch(e){}
+
+updateClock();
+
+if(
+memberGrid &&
+memberGrid.children.length
+){
+
+loadNewestMembers();
+
+}
+
+}
+
+/* =========================
+   CLOCK + GREETING
+========================= */
+
+function updateClock(){
+
+const now =
+new Date();
+
+const isDe =
+currentLang() === "de";
+
+const hour =
+now.getHours();
+
+let greeting;
+
+if(
+hour >= 5 &&
+hour < 12
+){
+
+greeting =
+isDe
+? "Guten Morgen aus Entenhausen"
+: "Good morning from Entenhausen";
+
+}
+
+else if(
+hour >= 12 &&
+hour < 17
+){
+
+greeting =
+isDe
+? "Guten Tag aus Entenhausen"
+: "Good afternoon from Entenhausen";
+
+}
+
+else if(
+hour >= 17 &&
+hour < 22
+){
+
+greeting =
+isDe
+? "Guten Abend aus Entenhausen"
+: "Good evening from Entenhausen";
+
+}
+
+else{
+
+greeting =
+isDe
+? "Gute Nacht aus Entenhausen"
+: "Good night from Entenhausen";
+
+}
+
+greetingEl.textContent =
+greeting;
+
+clockEl.textContent =
+now.toLocaleTimeString(
+isDe
+? "de-DE"
+: "en-US",
+{
+hour:"2-digit",
+minute:"2-digit",
+second:"2-digit"
+}
+);
+
+dateEl.textContent =
+now.toLocaleDateString(
+isDe
+? "de-DE"
+: "en-US",
+{
+weekday:"long",
+year:"numeric",
+month:"long",
+day:"numeric"
+}
+);
+
+}
+
+/* =========================
+   CHESS.COM API
+========================= */
+
+const CLUB_SLUG =
+"entenhausen";
+
+async function fetchJson(url){
+
+const response =
+await fetch(
+url,
+{
+headers:{
+"Accept":"application/json"
+}
+}
+);
+
+if(!response.ok){
+
+throw new Error(
+"HTTP " +
+response.status
+);
+
+}
+
+return response.json();
+
+}
+
+/* =========================
+   HIGHEST RATING
+========================= */
+
+function highestRating(stats){
+
+const pools = [
+
+[
+"Rapid",
+stats?.chess_rapid?.last?.rating
+],
+
+[
+"Blitz",
+stats?.chess_blitz?.last?.rating
+],
+
+[
+"Bullet",
+stats?.chess_bullet?.last?.rating
+],
+
+[
+"Daily",
+stats?.chess_daily?.last?.rating
+],
+
+[
+"Chess960",
+stats?.chess960_daily?.last?.rating
+]
+
+].filter(
+([name,rating]) =>
+Number.isFinite(rating)
+);
+
+if(!pools.length){
+
+return{
+
+rating:"—",
+
+label:
+currentLang() === "de"
+? "Keine Wertung"
+: "Unrated"
+
+};
+
+}
+
+pools.sort(
+(a,b) =>
+b[1] - a[1]
+);
+
+return{
+
+rating:
+pools[0][1],
+
+label:
+pools[0][0]
+
+};
+
+}
+
+/* =========================
+   JOIN DATE
+========================= */
+
+function joinedLabel(timestamp){
+
+if(!timestamp){
+
+return currentLang() === "de"
+? "Unbekannt"
+: "Unknown";
+
+}
+
+const date =
+new Date(
+timestamp * 1000
+);
+
+return date.toLocaleDateString(
+currentLang() === "de"
+? "de-DE"
+: "en-US",
+{
+year:"numeric",
+month:"short",
+day:"numeric"
+}
+);
+
+}
+
+/* =========================
+   NEW MEMBER BOARD
+========================= */
+
+async function loadNewestMembers(){
+
+if(
+!memberGrid ||
+!memberStatus
+){
+
+return;
+
+}
+
+memberGrid.innerHTML =
+"";
+
+memberStatus.classList.remove(
+"error"
+);
+
+memberStatus.textContent =
+currentLang() === "de"
+? "Neueste Clubmitglieder werden geladen…"
+: "Loading the newest club members…";
+
+try{
+
+const club =
+await fetchJson(
+`https://api.chess.com/pub/club/${CLUB_SLUG}/members`
+);
+
+/*
+Chess.com separates
+weekly and all-time members.
+
+Combine both lists,
+remove duplicates,
+then sort by club join time.
+*/
+
+const combined = [
+
+...(club.weekly || []),
+
+...(club.all_time || [])
+
+];
+
+const unique =
+Array.from(
+
+new Map(
+
+combined.map(
+member => [
+member.username.toLowerCase(),
+member
+]
+)
+
+).values()
+
+);
+
+const newest =
+unique
+
+.sort(
+(a,b) =>
+(b.joined || 0) -
+(a.joined || 0)
+)
+
+.slice(
+0,
+5
+);
+
+if(!newest.length){
+
+throw new Error(
+"No members returned"
+);
+
+}
+
+/*
+Fetch each member's
+profile and rating stats.
+*/
+
+const details =
+await Promise.all(
+
+newest.map(
+
+async member => {
+
+const username =
+member.username;
+
+const profileRequest =
+fetchJson(
+`https://api.chess.com/pub/player/${encodeURIComponent(username)}`
+)
+.catch(
+() => ({})
+);
+
+const statsRequest =
+fetchJson(
+`https://api.chess.com/pub/player/${encodeURIComponent(username)}/stats`
+)
+.catch(
+() => ({})
+);
+
+const [
+profile,
+stats
+] =
+await Promise.all([
+profileRequest,
+statsRequest
+]);
+
+return{
+
+member,
+profile,
+
+best:
+highestRating(stats)
+
+};
+
+}
+
+)
+
+);
+
+/* =========================
+   RENDER MEMBERS
+========================= */
+
+memberGrid.innerHTML =
+"";
+
+details.forEach(
+({
+member,
+profile,
+best
+}) => {
+
+const link =
+document.createElement(
+"a"
+);
+
+link.className =
+"member";
+
+link.href =
+profile.url ||
+`https://www.chess.com/member/${encodeURIComponent(member.username)}`;
+
+link.target =
+"_blank";
+
+link.rel =
+"noopener";
+
+/* AVATAR */
+
+if(profile.avatar){
+
+const image =
+document.createElement(
+"img"
+);
+
+image.className =
+"member-avatar";
+
+image.src =
+profile.avatar;
+
+image.alt =
+`${member.username} avatar`;
+
+image.loading =
+"lazy";
+
+link.appendChild(
+image
+);
+
+}
+
+else{
+
+const fallback =
+document.createElement(
+"div"
+);
+
+fallback.className =
+"member-avatar member-fallback";
+
+fallback.textContent =
+member.username
+.slice(0,1)
+.toUpperCase();
+
+link.appendChild(
+fallback
+);
+
+}
+
+/* USER INFO */
+
+const copy =
+document.createElement(
+"div"
+);
+
+copy.className =
+"member-copy";
+
+const name =
+document.createElement(
+"div"
+);
+
+name.className =
+"member-name";
+
+name.textContent =
+"@" +
+member.username;
+
+const joined =
+document.createElement(
+"div"
+);
+
+joined.className =
+"member-joined";
+
+joined.textContent =
+(
+currentLang() === "de"
+? "Beigetreten: "
+: "Joined: "
+)
++
+joinedLabel(
+member.joined
+);
+
+copy.append(
+name,
+joined
+);
+
+/* RATING */
+
+const rating =
+document.createElement(
+"div"
+);
+
+rating.className =
+"member-rating";
+
+const score =
+document.createElement(
+"strong"
+);
+
+score.textContent =
+best.rating;
+
+const pool =
+document.createElement(
+"span"
+);
+
+pool.textContent =
+best.label;
+
+rating.append(
+score,
+pool
+);
+
+link.append(
+copy,
+rating
+);
+
+memberGrid.appendChild(
+link
+);
+
+}
+);
+
+/* STATUS */
+
+memberStatus.textContent =
+currentLang() === "de"
+
+? "Live-Daten • neueste Mitglieder zuerst • höchste aktuelle Wertung"
+
+: "Live data • newest members first • highest current rating";
+
+}
+
+catch(error){
+
+console.error(
+"New member board:",
+error
+);
+
+memberStatus.classList.add(
+"error"
+);
+
+memberStatus.innerHTML =
+"";
+
+const text =
+document.createElement(
+"span"
+);
+
+text.textContent =
+currentLang() === "de"
+
+? "Die Chess.com-Daten konnten gerade nicht geladen werden. "
+
+: "Chess.com data could not be loaded right now. ";
+
+const retry =
+document.createElement(
+"button"
+);
+
+retry.type =
+"button";
+
+retry.className =
+"member-retry";
+
+retry.textContent =
+currentLang() === "de"
+
+? "ERNEUT VERSUCHEN"
+
+: "RETRY";
+
+retry.addEventListener(
+"click",
+loadNewestMembers,
+{
+once:true
+}
+);
+
+memberStatus.append(
+text,
+retry
+);
+
+}
+
+}
+
+/* =========================
+   LANGUAGE EVENTS
+========================= */
+
+en.addEventListener(
+"click",
+() => setLang("en")
+);
+
+de.addEventListener(
+"click",
+() => setLang("de")
+);
+
+/* =========================
+   INITIAL LANGUAGE
+========================= */
+
+let storedLanguage =
+"en";
+
+try{
+
+storedLanguage =
+localStorage.getItem(
+"entenhausen-lang"
+) || "en";
+
+}catch(e){}
+
+setLang(
+storedLanguage
+);
+
+/* =========================
+   START CLOCK
+========================= */
+
+updateClock();
+
+setInterval(
+updateClock,
+1000
+);
+
+/* =========================
+   LOAD MEMBERS
+========================= */
+
+loadNewestMembers();
+
+/* =========================
+   DESKTOP TILT EFFECT
+========================= */
+
+const dash =
+document.getElementById(
+"dashboard"
+);
+
+if(
+window.matchMedia(
+"(pointer:fine)"
+).matches
+){
+
+dash.addEventListener(
+"mousemove",
+event => {
+
+const rect =
+dash.getBoundingClientRect();
+
+const x =
+(
+event.clientX -
+rect.left
+)
+/
+rect.width
+-
+.5;
+
+const y =
+(
+event.clientY -
+rect.top
+)
+/
+rect.height
+-
+.5;
+
+dash.style.transform =
+`perspective(1200px)
+rotateY(${x * 1.1}deg)
+rotateX(${-y * .55}deg)`;
+
+}
+);
+
+dash.addEventListener(
+"mouseleave",
+() => {
+
+dash.style.transform =
+"";
+
+}
+);
+
+}
+
 })();
 </script>
+
 </body>
 </html>
